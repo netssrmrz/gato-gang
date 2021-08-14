@@ -7,12 +7,35 @@ body
   padding: 0; 
   height: 100vh;
   width: 100vw;
-  xdisplay: grid;
+  display: flex;
+  flex-direction: column;
 }
 #page_canvas
 {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  xz-index: -1;
+  flex-grow: 1;
+}
+
+.de-header
+{
+  height: 55px;
+  display: block;
+  padding: 15px;
+}
+.de-header-action
+{
+  float: right;
+}
+.de-header-title
+{
+  font-size: 25px;
+}
+.de-header-user
+{
+  --def-display: inline-block;
+  display: none;
+}
+.de-header-signin
+{
+  --def-display: inline-block;
+  display: none;
 }

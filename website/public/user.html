@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>deCMS - Project</title>
+
+    <script src="/__/firebase/8.6.8/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.css"  />
+
+    <script src="/components/index_ext.js" type="module"></script>
+    <link type="text/css" rel="stylesheet" href="styles.css"  />
+    
+    <script type="module">
+      import Utils from "./lib/Utils.js";
+      import De_User from "./lib/De_User.js";
+      import De_Db_Firestore from "./lib/De_Db_Firestore.js";
+
+      let user, removeAuthStateChanged;
+
+      let db = new De_Db_Firestore();
+      const urlParams = new URLSearchParams(window.location.search);
+      const uid = urlParams.get('uid');
+      if (uid)
+      {
+        removeAuthStateChanged = db.auth.onAuthStateChanged(Main);
+      }
+      else
+      {
+        Main();
+      }
+
+      function Main(fb_user)
+      {
+        Prepare_Fields(db);
+
+        if (fb_user)
+        {
+          user = fb_user;
+          //Utils.Hide("p_label"); Utils.Hide("p_value");
+          document.getElementById("email_value").disabled = true;
+        }
+        else
+        {
+          user = new De_User();
+          Utils.Hide("id_label"); Utils.Hide("id_value");
+          document.getElementById("email_value").disabled = false;
+        }
+
+        // populate fields
+        Obj_To_Fields(user);
+
+        const ok_btn = document.getElementById("ok_btn");
+        ok_btn.addEventListener("click", On_Click_Save);
+
+        const cancel_btn = document.getElementById("cancel_btn");
+        cancel_btn.addEventListener("click", On_Click_Cancel);
+      }
+
+      function Prepare_Fields(db)
+      {
+      }
+
+      function Obj_To_Fields(user)
+      {
+        let value_elem = document.getElementById("id_value");
+        value_elem.innerText = user.uid;
+
+        value_elem = document.getElementById("n_value");
+        value_elem.value = user.displayName;
+
+        value_elem = document.getElementById("email_value");
+        value_elem.value = user.email;
+      }
+
+      function Fields_To_Obj(user)
+      {
+        let value_elem;
+
+        value_elem = document.getElementById("n_value");
+        user.displayName = value_elem.value;
+
+        value_elem = document.getElementById("email_value");
+        user.email = value_elem.value;
+
+        value_elem = document.getElementById("p_value");
+        user.password = value_elem.value;
+      }
+
+      function Return_To_Page()
+      {
+        window.history.back();
+      }
+
+      async function On_Click_Save()
+      {
+        const user_details = new De_User();
+        Fields_To_Obj(user_details);
+        if (user.uid)
+        {
+          await Update_User(user, user_details)
+          //Return_To_Page();
+        }
+        else
+        {
+          const credentials = firebase.auth(db.app).createUserWithEmailAndPassword
+            (user_details.email, user_details.password).then(On_Success, On_Error);
+          async function On_Success(info)
+          {
+            await info.user.updateProfile(user_details);
+            window.open("index.html", "_self");
+          }
+          function On_Error(error)
+          {
+            alert(error.message);
+          }
+        }
+      }
+
+      function On_Click_Cancel()
+      {
+        Return_To_Page();
+      }
+
+      async function Update_User(fb_user, new_details)
+      {
+        delete new_details.email;
+        //delete user_details.password;
+        delete new_details.uid;
+        await fb_user.updateProfile(new_details);
+        await Update_Password(fb_user, new_details.password);
+      }
+
+      async function Update_Password(user, password)
+      {
+        try 
+        {
+          await user.updatePassword(password);
+          alert("User details have been successfully updated.");
+        }
+        catch (e)
+        {
+          if (e.code == "auth/requires-recent-login")
+          {
+            const hdr_elem = document.getElementById("hdr");
+            hdr_elem.Sign_In(Signed_In);
+            function Signed_In()
+            {
+              Update_Password(user, password);
+            }
+          }
+          else
+          {
+            Utils.Handle_Errors(e);
+          }
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <de-header id="hdr" title="User"></de-header>
+
+    <div id="form" autocomplete="off">
+      <label id="id_label">Id.</label><span id="id_value" class="field_value"></span>
+      <label>Name</label><input id="n_value" class="field_value">
+      <label>E-Mail</label><input id="email_value" type="email" class="field_value">
+      <label id="p_label">Password</label><input id="p_value" type="password" class="field_value" autocomplete="off">
+
+      <label></label>
+      <span>
+        <button id="ok_btn">OK</button>
+        <button id="cancel_btn">Cancel</button>
+      </span>
+    </div>
+
+  </body>
+</html>

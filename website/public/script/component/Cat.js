@@ -1,54 +1,75 @@
 
 class Cat
 {
-  constructor(sprite, x, y)
+  constructor(id, sprite, x, y, uid)
   {
+    this.id = id;
     this.x = x;
     this.y = y;
     this.max_v = 0.05;
     this.sprite = sprite;
+    this.dir = 4;
+    this.uid = uid;
   }
 
-  Move_To(params, t)
+  Move_To(x, y, t1)
   {
-    const dx = params.x - this.x;
-    const dy = params.y - this.y;
+    const dx = x - this.x;
+    const dy = y - this.y;
     const d = Math.sqrt(dx*dx + dy*dy);
+    const t2 = t1 + d/this.max_v;
+    const dt = t2 - t1;
 
-    if (d < this.max_v*t)
-    {
-      this.cmd = null;
-      //this.vx = 0;
-      //this.vy = 0;
-    }
-    else
-    {
-      this.vx = this.max_v * dx/d;
-      this.vy = this.max_v * dy/d;
-      this.x += this.vx*t;
-      this.y += this.vy*t;
-    }
+    const mx = dx / dt;
+    const bx = this.x - mx*t1;
+    const my = dy / dt;
+    const by = this.y - my*t1;
+    const params = {mx, bx, my, by, t2};
+
+    const cmd = {name: "On_Move_To", params};
+    this.Apply_Cmd(cmd);
+
+    return cmd;
   }
 
-  Draw(gfx, t)
+  Apply_Cmd(cmd)
+  {
+    if (cmd.name == "On_Move_To")
+    {
+      this.dir = this.Calc_Direction(cmd.params.mx, cmd.params.my);
+    }
+    this.cmd = cmd;
+  }
+
+  On_Move_To(params, t)
+  {
+    if (t > params.t2)
+    {
+      t = params.t2;
+      this.cmd = null;
+    }
+    this.x = params.mx * t + params.bx;
+    this.y = params.my * t + params.by;
+  }
+
+  Draw(gfx, elapsed_millis)
   {
     let frames;
 
-    const dir = this.Calc_Direction();
     if (this.cmd)
     {
-      frames = this.sprite.dir_to_frames[dir];
-      this.sprite.Animate(gfx, 0, 0, frames, t);
+      frames = this.sprite.dir_to_frames[this.dir];
+      this.sprite.Animate(gfx, 0, 0, frames, elapsed_millis);
     }
     else
     {
-      const frame_idx = this.sprite.dir_to_frame[dir];
+      const frame_idx = this.sprite.dir_to_frame[this.dir];
       frames = this.sprite.stand;
       this.sprite.Draw(gfx, 0, 0, frames, frame_idx);
     }
   }
 
-  Calc_Direction()
+  Calc_Direction(vx, vy)
   {
     let res = 0;
 
@@ -57,40 +78,40 @@ class Cat
     const m3 = -2.41421356237;
     const m4 = -0.41421356237;
 
-    const m1y = m1 * this.vx;
-    const m2y = m2 * this.vx;
-    const m3y = m3 * this.vx;
-    const m4y = m4 * this.vx;
+    const m1y = m1 * vx;
+    const m2y = m2 * vx;
+    const m3y = m3 * vx;
+    const m4y = m4 * vx;
 
-    if (this.vy < m2y && this.vy < m3y)
+    if (vy < m2y && vy < m3y)
     {
       res = 0
     }
-    else if (this.vy < m1y && this.vy > m2y)
+    else if (vy < m1y && vy > m2y)
     {
       res = 1
     }
-    else if (this.vy < m4y && this.vy > m1y)
+    else if (vy < m4y && vy > m1y)
     {
       res = 2
     }
-    else if (this.vy < m3y && this.vy > m4y)
+    else if (vy < m3y && vy > m4y)
     {
       res = 3
     }
-    else if (this.vy > m2y && this.vy > m3y)
+    else if (vy > m2y && vy > m3y)
     {
       res = 4
     }
-    else if (this.vy > m1y && this.vy < m2y)
+    else if (vy > m1y && vy < m2y)
     {
       res = 5
     }
-    else if (this.vy > m4y && this.vy < m1y)
+    else if (vy > m4y && vy < m1y)
     {
       res = 6
     }
-    else if (this.vy > m3y && this.vy < m4y)
+    else if (vy > m3y && vy < m4y)
     {
       res = 7
     }

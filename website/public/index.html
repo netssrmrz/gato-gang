@@ -4,16 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gato Gang</title>
-    <link rel="stylesheet" type="text/css" href="css/index.css" />
 
-    <script defer src="/__/firebase/8.8.1/firebase-app.js"></script>
-    <script defer src="/__/firebase/8.8.1/firebase-auth.js"></script>
-    <script defer src="/__/firebase/8.8.1/firebase-firestore.js"></script>
-    <script defer src="/__/firebase/8.8.1/firebase-functions.js"></script>
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.css"/>
 
     <script type="module">
-      import "./script/component/Gato_Gang.js";
+      import "/script/firebase.js";
+      import "/script/component/index.js";
 
       window.onload = Main;
 
@@ -24,6 +21,7 @@
 
   </head>
   <body>
-    <gato-gang id="page_canvas"></gato-gang>
+    <de-header title="Gato-Gang" app-name="gato-gang"></de-header>
+    <gato-gang id="page_canvas" xstyle="width:200px;height:200px"></gato-gang>
   </body>
 </html>

@@ -53,8 +53,9 @@ class De_Game extends HTMLElement
 
   Draw_Frame(t)
   {
-    const elapsed = this.start_millis + t - this.now;
-    this.now = this.start_millis + t;
+    const new_now = this.start_millis + t;
+    const elapsed = new_now - this.now;
+    this.now = new_now;
 
     for (const obj of this.objs)
     {
@@ -97,7 +98,8 @@ class De_Game extends HTMLElement
 
   Now()
   {
-    return performance.timing.navigationStart + performance.now();
+    //return performance.timing.navigationStart + performance.now();
+    return Date.now();
   }
 
   Reset_Transform()

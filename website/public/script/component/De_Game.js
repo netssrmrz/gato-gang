@@ -12,6 +12,8 @@ class De_Game extends HTMLElement
 
     this.Init_Canvas();
     window.onresize = () => this.Init_Canvas();
+    this.start_millis = this.Now();
+    this.now = this.start_millis;
     window.requestAnimationFrame(t => this.Draw_Frame(t));
 
     if (this.On_Connected_Callback)
@@ -22,8 +24,8 @@ class De_Game extends HTMLElement
 
   Init_Canvas()
   {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    this.canvas.width = this.offsetWidth;
+    this.canvas.height = this.offsetHeight;
 
     this.gfx = this.canvas.getContext('2d');
     this.gfx.strokeStyle = "#000";
@@ -49,20 +51,17 @@ class De_Game extends HTMLElement
     return canvas_pt;
   }
 
-  Draw_Frame(draw_time)
+  Draw_Frame(t)
   {
-    if (!this.gfx.prev_time)
-    {
-      this.gfx.prev_time = draw_time;
-    }
-    const elapsed_time = draw_time - this.gfx.prev_time;
-    this.gfx.prev_time = draw_time;
+    const elapsed = this.start_millis + t - this.now;
+    this.now = this.start_millis + t;
 
     for (const obj of this.objs)
     {
       if (obj.cmd)
       {
-        obj[obj.cmd.name](obj.cmd.params, elapsed_time);
+        obj[obj.cmd.name](obj.cmd.params, this.now);
+        //obj[obj.cmd.name](obj.cmd.params, t);
       }
     }
 
@@ -74,7 +73,7 @@ class De_Game extends HTMLElement
     {
       this.gfx.save();
       this.gfx.translate(obj.x, obj.y);
-      obj.Draw(this.gfx, elapsed_time);
+      obj.Draw(this.gfx, elapsed);
       this.gfx.restore();
     }
 
@@ -82,9 +81,23 @@ class De_Game extends HTMLElement
     window.requestAnimationFrame(t => this.Draw_Frame(t));
   }
 
+  Get_Millis(t)
+  {
+    const now = this.start_millis + t;
+    const elapsed = t - this.prev_millis;
+    this.prev_millis = t;
+
+    return {now, elapsed};
+  }
+
   Clear()
   {
     this.gfx.clearRect(0, 0, this.gfx.canvas.width, this.gfx.canvas.height);
+  }
+
+  Now()
+  {
+    return performance.timing.navigationStart + performance.now();
   }
 
   Reset_Transform()

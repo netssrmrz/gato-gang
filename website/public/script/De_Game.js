@@ -62,7 +62,6 @@ class De_Game extends HTMLElement
       if (obj.cmd)
       {
         obj[obj.cmd.name](obj.cmd.params, this.now);
-        //obj[obj.cmd.name](obj.cmd.params, t);
       }
     }
 
@@ -98,7 +97,6 @@ class De_Game extends HTMLElement
 
   Now()
   {
-    //return performance.timing.navigationStart + performance.now();
     return Date.now();
   }
 

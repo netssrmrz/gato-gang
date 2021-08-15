@@ -39,17 +39,20 @@ class De_Db_Realtime
     return res;
   }
 
-  async Select_Objs(path, order_by)
+  async Select_Objs(table_name, order_by)
   {
-    var ref, query_res, vals;
+    var res;
 
-    ref = this.conn.ref(path);
-    if (order_by)
-      ref = ref.orderByChild(order_by);
-    query_res = await ref.once('value');
-    vals = Db.To_Array(query_res);
+    const table = this.db.ref(table_name);
+    const query = this.Add_Sort(table, order_by);
+    const query_res = await query.once('value');
+    if (query_res.exists())
+    {
+      const res_items = De_Db_Realtime.To_Array(query_res);
+      res = res_items;
+    }
       
-    return vals;
+    return res;
   }
 
   async Save()
@@ -97,6 +100,16 @@ class De_Db_Realtime
         watch_callback(data);
       }
     }  
+  }
+
+  Add_Sort(table, order_by)
+  {
+    if (!Utils.isEmpty(order_by))
+    {
+      table = table.orderByChild(order_by);
+    }
+
+    return table;
   }
 
   Add_Where(table, where_filters)

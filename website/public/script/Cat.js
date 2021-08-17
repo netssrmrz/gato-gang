@@ -24,7 +24,12 @@ class Cat
     const bx = this.x - mx*t1;
     const my = dy / dt;
     const by = this.y - my*t1;
-    const params = {mx, bx, my, by, t2};
+    const params = 
+    {
+      mx, bx, my, by, 
+      x1: this.x, y1: this.y, t1,
+      x2: x, y2: y, t2
+    };
 
     const cmd = {name: "On_Move_To", params};
     this.Apply_Cmd(cmd);
@@ -47,9 +52,14 @@ class Cat
     {
       t = params.t2;
       this.cmd = null;
+      this.x = params.x2;
+      this.y = params.y2;
     }
-    this.x = params.mx * t + params.bx;
-    this.y = params.my * t + params.by;
+    else if (t > params.t1)
+    {
+      this.x = params.mx * t + params.bx;
+      this.y = params.my * t + params.by;
+    }
   }
 
   Draw(gfx, elapsed_millis)

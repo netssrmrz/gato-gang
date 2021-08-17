@@ -12,8 +12,8 @@ class De_Game extends HTMLElement
 
     this.Init_Canvas();
     window.onresize = () => this.Init_Canvas();
-    this.start_millis = this.Now();
-    this.now = this.start_millis;
+    //this.start_millis = this.Now();
+    //this.now = this.start_millis;
     window.requestAnimationFrame(t => this.Draw_Frame(t));
 
     if (this.On_Connected_Callback)
@@ -29,8 +29,10 @@ class De_Game extends HTMLElement
 
     this.gfx = this.canvas.getContext('2d');
     this.gfx.strokeStyle = "#000";
+    this.gfx.fillStyle = "#000";
     this.gfx.lineWidth = 3;
     this.gfx.lineCap = "round";
+    this.gfx.font = '30px sans-serif';
 
     const x = this.canvas.width/2;
     const y = this.canvas.height/2;
@@ -53,12 +55,28 @@ class De_Game extends HTMLElement
 
   Draw_Frame(t)
   {
+    let elapsed;
+    if (this.start_millis)
+    {
+      const new_now = Date.now();
+      elapsed = new_now - this.now;
+      this.now = new_now;
+    }
+    else
+    {
+      this.start_millis = Date.now();
+      this.now = this.start_millis;
+      elapsed = 0;
+    }
+
+    this.Clear();
+    this.gfx.fillText("start: " + this.start_millis, 50, 50);
+    this.gfx.fillText("frame now: " + t, 50, 85);
+    this.gfx.fillText(this.now, 50, 120);
+    this.gfx.fillText(Date.now(), 50, 155);
+
     if (this.objs)
     {
-      const new_now = this.start_millis + t;
-      const elapsed = new_now - this.now;
-      this.now = new_now;
-
       for (const obj of this.objs)
       {
         if (obj.cmd)
@@ -67,7 +85,6 @@ class De_Game extends HTMLElement
         }
       }
 
-      this.Clear();
       this.gfx.save();
       this.gfx.setTransform(this.cam_tx);
 

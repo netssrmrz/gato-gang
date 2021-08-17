@@ -8,25 +8,21 @@ class Gato_Gang extends De_Game
   constructor()
   {
     super();
-    
-    this.cat_sprite = new Cat_Sprite();
-
-    this.objs = [];
-    this.player = null;
 
     this.On_Cmd_Added = this.On_Cmd_Added.bind(this);
     this.On_Auth_State_Changed = this.On_Auth_State_Changed.bind(this);
-
+    
+    this.cat_sprite = new Cat_Sprite();
+    this.objs = null;
+    this.player = null;
     this.db = new De_Db_Realtime();
-    this.db.Watch("cmd", "child_added", this.On_Cmd_Added);
     this.db.auth.onAuthStateChanged(this.On_Auth_State_Changed);
-
-    this.Init_Game();
   }
 
   async Init_Game()
   {
     const cmds = await this.db.Select_Objs("cmd", "params/t2");
+    this.objs = [];
 
     const obj1 = new Cat(1, this.cat_sprite, 100, 100, "BpgDmoBBZahhgNscgzDd50kggm52");
     this.Update_Obj(cmds, obj1);
@@ -39,11 +35,6 @@ class Gato_Gang extends De_Game
     const obj3 = new Cat(3, this.cat_sprite, 0, 0, "1gYmk3hgKtSAxvnt40tlzzJMLFj2");
     this.Update_Obj(cmds, obj3);
     this.objs.push(obj3);
-
-    if (this.uid)
-    {
-      this.player = this.objs.find(o => o.uid == this.uid);
-    }
   }
 
   Update_Obj(cmds, obj)
@@ -59,13 +50,19 @@ class Gato_Gang extends De_Game
     }
   }
 
-  On_Auth_State_Changed(user)
+  async On_Auth_State_Changed(user)
   {
-    this.player = null;
     if (user)
     {
-      this.uid = user.uid;
+      await this.Init_Game();
       this.player = this.objs.find(o => o.uid == user.uid);
+      this.Un_Watch = this.db.Watch("cmd", "child_added", this.On_Cmd_Added);
+    }
+    else
+    {
+      this.Un_Watch();
+      this.objs = null;
+      this.player = null;
     }
   }
 

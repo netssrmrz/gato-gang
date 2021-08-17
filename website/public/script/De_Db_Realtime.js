@@ -100,6 +100,12 @@ class De_Db_Realtime
         watch_callback(data);
       }
     }  
+    function Un_Watch()
+    {
+      ref.off(watch_type, On_Change);
+    }
+
+    return Un_Watch;
   }
 
   Add_Sort(table, order_by)

@@ -53,31 +53,34 @@ class De_Game extends HTMLElement
 
   Draw_Frame(t)
   {
-    const new_now = this.start_millis + t;
-    const elapsed = new_now - this.now;
-    this.now = new_now;
-
-    for (const obj of this.objs)
+    if (this.objs)
     {
-      if (obj.cmd)
+      const new_now = this.start_millis + t;
+      const elapsed = new_now - this.now;
+      this.now = new_now;
+
+      for (const obj of this.objs)
       {
-        obj[obj.cmd.name](obj.cmd.params, this.now);
+        if (obj.cmd)
+        {
+          obj[obj.cmd.name](obj.cmd.params, this.now);
+        }
       }
-    }
 
-    this.Clear();
-    this.gfx.save();
-    this.gfx.setTransform(this.cam_tx);
-
-    for (const obj of this.objs)
-    {
+      this.Clear();
       this.gfx.save();
-      this.gfx.translate(obj.x, obj.y);
-      obj.Draw(this.gfx, elapsed);
+      this.gfx.setTransform(this.cam_tx);
+
+      for (const obj of this.objs)
+      {
+        this.gfx.save();
+        this.gfx.translate(obj.x, obj.y);
+        obj.Draw(this.gfx, elapsed);
+        this.gfx.restore();
+      }
+
       this.gfx.restore();
     }
-
-    this.gfx.restore();
     window.requestAnimationFrame(t => this.Draw_Frame(t));
   }
 

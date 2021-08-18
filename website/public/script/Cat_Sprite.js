@@ -10,7 +10,7 @@ class Cat_Sprite
 
     this.img = new Image();
     this.img.onload = this.On_Load;
-    this.img.src = "/image/cat.png";
+    this.img.src = "/image/cat2.png";
 
     this.walk_down =
     [
@@ -20,21 +20,21 @@ class Cat_Sprite
     ];
     this.walk_left =
     [
-      {x: 0, y: 32, s: 32},
-      {x: 32, y: 32, s: 32},
-      {x: 64, y: 32, s: 32}
+      {x: 0, y: 33, s: 32},
+      {x: 32, y: 33, s: 32},
+      {x: 64, y: 33, s: 32}
     ];
     this.walk_right =
     [
-      {x: 0, y: 64, s: 32},
-      {x: 32, y: 64, s: 32},
-      {x: 64, y: 64, s: 32}
+      {x: 0, y: 65, s: 32},
+      {x: 32, y: 65, s: 32},
+      {x: 64, y: 65, s: 32}
     ];
     this.walk_up =
     [
-      {x: 0, y: 96, s: 32},
-      {x: 32, y: 96, s: 32},
-      {x: 64, y: 96, s: 32}
+      {x: 0, y: 97, s: 32},
+      {x: 32, y: 97, s: 32},
+      {x: 64, y: 97, s: 32}
     ];
 
     this.walk_left_down =
@@ -45,21 +45,21 @@ class Cat_Sprite
     ];
     this.walk_left_up =
     [
-      {x: 96, y: 32, s: 32},
-      {x: 128, y: 32, s: 32},
-      {x: 160, y: 32, s: 32}
+      {x: 96, y: 33, s: 32},
+      {x: 128, y: 33, s: 32},
+      {x: 160, y: 33, s: 32}
     ];
     this.walk_right_down =
     [
-      {x: 96, y: 64, s: 32},
-      {x: 128, y: 64, s: 32},
-      {x: 160, y: 64, s: 32}
+      {x: 96, y: 65, s: 32},
+      {x: 128, y: 65, s: 32},
+      {x: 160, y: 65, s: 32}
     ];
     this.walk_right_up =
     [
-      {x: 96, y: 96, s: 32},
-      {x: 128, y: 96, s: 32},
-      {x: 160, y: 96, s: 32}
+      {x: 96, y: 97, s: 32},
+      {x: 128, y: 97, s: 32},
+      {x: 160, y: 97, s: 32}
     ];
 
     this.stand =

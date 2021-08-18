@@ -39,13 +39,16 @@ class Gato_Gang extends De_Game
 
   Update_Obj(cmds, obj)
   {
-    for (let i = cmds.length-1; i >= 0; i--)
+    if (cmds)
     {
-      const cmd = cmds[i];
-      if (cmd.obj_id == obj.id)
+      for (let i = cmds.length-1; i >= 0; i--)
       {
-        obj.Apply_Cmd(cmd);
-        break;
+        const cmd = cmds[i];
+        if (cmd.obj_id == obj.id)
+        {
+          obj.Apply_Cmd(cmd);
+          break;
+        }
       }
     }
   }

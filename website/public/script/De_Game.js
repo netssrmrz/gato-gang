@@ -70,10 +70,10 @@ class De_Game extends HTMLElement
     }
 
     this.Clear();
-    this.gfx.fillText("start: " + this.start_millis, 50, 50);
-    this.gfx.fillText("frame now: " + t, 50, 85);
-    this.gfx.fillText(this.now, 50, 120);
-    this.gfx.fillText(Date.now(), 50, 155);
+    //this.gfx.fillText("start: " + this.start_millis, 50, 50);
+    //this.gfx.fillText("frame now: " + t, 50, 85);
+    //this.gfx.fillText(this.now, 50, 120);
+    //this.gfx.fillText(Date.now(), 50, 155);
 
     if (this.objs)
     {

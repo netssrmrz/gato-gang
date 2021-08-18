@@ -3,23 +3,20 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>deCMS - Project</title>
+    <title>Gato Gang - Account</title>
 
-    <script src="/__/firebase/8.6.8/firebase.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.js"></script>
-    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.css"  />
-
-    <script src="/components/index_ext.js" type="module"></script>
-    <link type="text/css" rel="stylesheet" href="styles.css"  />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.css"/>
     
     <script type="module">
-      import Utils from "./lib/Utils.js";
-      import De_User from "./lib/De_User.js";
-      import De_Db_Firestore from "./lib/De_Db_Firestore.js";
+      import "/script/firebase.js";
+      import "/script/component/index.js";
+      import Utils from "./script/Utils.js";
+      import De_Db_Realtime from "./script/De_Db_Realtime.js";
 
       let user, removeAuthStateChanged;
 
-      let db = new De_Db_Firestore();
+      let db = new De_Db_Realtime();
       const urlParams = new URLSearchParams(window.location.search);
       const uid = urlParams.get('uid');
       if (uid)
@@ -43,7 +40,7 @@
         }
         else
         {
-          user = new De_User();
+          user = {uid: "", displayName: "", email: ""};
           Utils.Hide("id_label"); Utils.Hide("id_value");
           document.getElementById("email_value").disabled = false;
         }
@@ -95,7 +92,7 @@
 
       async function On_Click_Save()
       {
-        const user_details = new De_User();
+        const user_details = {};
         Fields_To_Obj(user_details);
         if (user.uid)
         {
@@ -160,7 +157,7 @@
   </head>
 
   <body>
-    <de-header id="hdr" title="User"></de-header>
+    <de-header id="hdr" title="Gato-Gang" app-name="gato-gang"></de-header>
 
     <div id="form" autocomplete="off">
       <label id="id_label">Id.</label><span id="id_value" class="field_value"></span>
@@ -170,7 +167,7 @@
 
       <label></label>
       <span>
-        <button id="ok_btn">OK</button>
+        <button id="ok_btn">Save</button>
         <button id="cancel_btn">Cancel</button>
       </span>
     </div>

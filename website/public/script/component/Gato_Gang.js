@@ -63,7 +63,10 @@ class Gato_Gang extends De_Game
     }
     else
     {
-      this.Un_Watch();
+      if (this.Un_Watch)
+      {
+        this.Un_Watch();
+      }
       this.objs = null;
       this.player = null;
     }

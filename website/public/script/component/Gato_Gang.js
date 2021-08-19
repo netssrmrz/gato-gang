@@ -1,5 +1,5 @@
 import De_Game from "../De_Game.js";
-import Cat from "../Cat.js";
+import Game_Object from "../Game_Object.js";
 import Cat_Sprite from "../Cat_Sprite.js";
 import De_Db_Realtime from "../De_Db_Realtime.js";
 
@@ -9,7 +9,7 @@ class Gato_Gang extends De_Game
   {
     super();
 
-    this.On_Cmd_Added = this.On_Cmd_Added.bind(this);
+    this.On_Obj_Changed = this.On_Obj_Changed.bind(this);
     this.On_Auth_State_Changed = this.On_Auth_State_Changed.bind(this);
     
     this.cat_sprite = new Cat_Sprite();
@@ -21,35 +21,10 @@ class Gato_Gang extends De_Game
 
   async Init_Game()
   {
-    const cmds = await this.db.Select_Objs("cmd", "params/t2");
-    this.objs = [];
-
-    const obj1 = new Cat(1, this.cat_sprite, 100, 100, "BpgDmoBBZahhgNscgzDd50kggm52");
-    this.Update_Obj(cmds, obj1);
-    this.objs.push(obj1);
-
-    const obj2 = new Cat(2, this.cat_sprite, 0, 100, "i4lIQKprt5goIGTbMxoogfMrpCZ2");
-    this.Update_Obj(cmds, obj2);
-    this.objs.push(obj2);
-
-    const obj3 = new Cat(3, this.cat_sprite, 0, 0, "1gYmk3hgKtSAxvnt40tlzzJMLFj2");
-    this.Update_Obj(cmds, obj3);
-    this.objs.push(obj3);
-  }
-
-  Update_Obj(cmds, obj)
-  {
-    if (cmds)
+    this.objs = await Game_Object.Select_Objs(this.db);
+    for (const obj of this.objs)
     {
-      for (let i = cmds.length-1; i >= 0; i--)
-      {
-        const cmd = cmds[i];
-        if (cmd.obj_id == obj.id)
-        {
-          obj.Apply_Cmd(cmd);
-          break;
-        }
-      }
+      obj.sprite = this.cat_sprite;
     }
   }
 
@@ -59,7 +34,7 @@ class Gato_Gang extends De_Game
     {
       await this.Init_Game();
       this.player = this.objs.find(o => o.uid == user.uid);
-      this.Un_Watch = this.db.Watch("cmd", "child_added", this.On_Cmd_Added);
+      this.Un_Watch = this.db.Watch("obj", "child_changed", this.On_Obj_Changed);
     }
     else
     {
@@ -84,19 +59,18 @@ class Gato_Gang extends De_Game
       const canvas_pt = this.To_Canvas_Pt(event.offsetX, event.offsetY);
       const cmd = this.player.Move_To(canvas_pt.x, canvas_pt.y, this.now);
 
-      cmd.obj_id = this.player.id;
-      this.db.Insert("cmd", cmd);
+      cmd.Update(this.db);
     }
   }
 
-  On_Cmd_Added(cmd)
+  On_Obj_Changed(obj)
   {
-    if (!this.player || cmd.obj_id != this.player.id)
+    if (!this.player || obj.id != this.player.id)
     {
-      const obj = this.objs.find(o => o.id == cmd.obj_id);
-      if (obj)
+      const local_obj = this.objs.find(o => o.id == obj.id);
+      if (local_obj)
       {
-        obj.Apply_Cmd(cmd);
+        local_obj.Apply_Cmd(obj.cmd);
       }
     }
   }

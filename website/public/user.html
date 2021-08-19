@@ -13,6 +13,7 @@
       import "/script/component/index.js";
       import Utils from "./script/Utils.js";
       import De_Db_Realtime from "./script/De_Db_Realtime.js";
+      import Cat from "./script/Cat.js";
 
       let user, removeAuthStateChanged;
 
@@ -96,19 +97,30 @@
         Fields_To_Obj(user_details);
         if (user.uid)
         {
-          await Update_User(user, user_details)
+          await Update_User(user, user_details);
           //Return_To_Page();
         }
         else
         {
-          const credentials = firebase.auth(db.app).createUserWithEmailAndPassword
-            (user_details.email, user_details.password).then(On_Success, On_Error);
-          async function On_Success(info)
+          try
           {
+            const info = await firebase.auth(db.app)
+              .createUserWithEmailAndPassword(user_details.email, user_details.password);
             await info.user.updateProfile(user_details);
+
+            const init_values =
+            {
+              x: Math.random()*200-100,
+              y: Math.random()*200-100,
+              dir: 4,
+              uid: info.user.uid
+            };
+            const cat = new Cat(init_values);
+            const id = await cat.Insert(db);
+
             window.open("index.html", "_self");
           }
-          function On_Error(error)
+          catch (error)
           {
             alert(error.message);
           }

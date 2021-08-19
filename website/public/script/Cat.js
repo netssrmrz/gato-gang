@@ -1,15 +1,10 @@
+import Cmd from "./Cmd.js";
 
 class Cat
 {
-  constructor(id, sprite, x, y, uid)
+  constructor(init_values)
   {
-    this.id = id;
-    this.x = x;
-    this.y = y;
-    this.max_v = 0.05;
-    this.sprite = sprite;
-    this.dir = 4;
-    this.uid = uid;
+    this.To_Class_Object(init_values);
   }
 
   Move_To(x, y, t1)
@@ -31,7 +26,11 @@ class Cat
       x2: x, y2: y, t2
     };
 
-    const cmd = {name: "On_Move_To", params};
+    const cmd = new Cmd();
+    cmd.id = "cmd";
+    cmd.obj_id = this.id;
+    cmd.name = "On_Move_To";
+    cmd.params = params;
     this.Apply_Cmd(cmd);
 
     return cmd;
@@ -127,6 +126,39 @@ class Cat
     }
 
     return res;
+  }
+
+  To_Db_Object()
+  {
+    return {
+      class: "Cat",
+      id: this.id,
+      x: this.x,
+      y: this.y,
+      dir: this.dir,
+      uid: this.uid
+    };
+  }
+
+  To_Class_Object(db_object)
+  {
+    if (db_object)
+    {
+      this.id = db_object.id;
+      this.x = db_object.x;
+      this.y = db_object.y;
+      this.dir = db_object.dir;
+      this.uid = db_object.uid;
+      this.max_v = 0.05;
+    }
+  }
+
+  async Insert(db)
+  {
+    const db_cat = this.To_Db_Object();
+    this.id = await db.Insert("obj", db_cat);
+
+    return this.id;
   }
 }
 

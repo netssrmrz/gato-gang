@@ -60,27 +60,20 @@ class De_Db_Realtime
 
   }
 
-  Insert(path, obj)
+  async Insert(path, obj)
   {
     //console.log("Db.Insert(): path, obj =", path, obj);
     obj.id = this.db.ref(path).push().key;
-    this.db.ref(path + "/" + obj.id).set(obj);
+    await this.db.ref(path + "/" + obj.id).set(obj);
+
+    return obj.id;
   }
 
-  Update(path, obj, on_success_fn)
+  async Update(path, obj)
   {
-    var ref, promise;
+    await this.db.ref(path + "/" + obj.id).set(obj);
 
-    try
-    {
-      ref = this.conn.ref(path + "/" + obj.id);
-      promise = ref.set(obj);
-      promise.then(on_success_fn, on_success_fn);
-    }
-    catch (err)
-    {
-      on_success_fn(err);
-    }
+    return obj.id;
   }
 
   async Delete()

@@ -68,7 +68,7 @@ class Gato_Gang extends De_Game
       const local_obj = this.objs.find(o => o.id == obj.id);
       if (local_obj)
       {
-        local_obj.pos(obj.pos);
+        local_obj.pos = obj.pos;
       }
     }
   }

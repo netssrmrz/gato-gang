@@ -36,14 +36,13 @@
         if (fb_user)
         {
           user = fb_user;
-          //Utils.Hide("p_label"); Utils.Hide("p_value");
-          document.getElementById("email_value").disabled = true;
+          document.getElementById("e_value").disabled = true;
         }
         else
         {
           user = {uid: "", displayName: "", email: ""};
           Utils.Hide("id_label"); Utils.Hide("id_value");
-          document.getElementById("email_value").disabled = false;
+          document.getElementById("e_value").disabled = false;
         }
 
         // populate fields
@@ -68,7 +67,7 @@
         value_elem = document.getElementById("n_value");
         value_elem.value = user.displayName;
 
-        value_elem = document.getElementById("email_value");
+        value_elem = document.getElementById("e_value");
         value_elem.value = user.email;
       }
 
@@ -79,7 +78,7 @@
         value_elem = document.getElementById("n_value");
         user.displayName = value_elem.value;
 
-        value_elem = document.getElementById("email_value");
+        value_elem = document.getElementById("e_value");
         user.email = value_elem.value;
 
         value_elem = document.getElementById("p_value");
@@ -149,11 +148,18 @@
   <body>
     <de-header id="hdr" title="Gato-Gang" app-name="gato-gang"></de-header>
 
-    <div id="form" autocomplete="off">
-      <label id="id_label">Id.</label><span id="id_value" class="field_value"></span>
-      <label>Name</label><input id="n_value" class="field_value">
-      <label>E-Mail</label><input id="email_value" type="email" class="field_value">
-      <label id="p_label">Password</label><input id="p_value" type="password" class="field_value" autocomplete="off">
+    <div id="form">
+      <label id="id_label">Id.</label>
+      <span id="id_value" class="field_value"></span>
+
+      <label for="n_value">Name</label>
+      <input id="n_value" class="field_value">
+
+      <label for="e_value">E-mail</label>
+      <input id="e_value" type="email" class="field_value">
+
+      <label for="p_value">Password</label>
+      <input id="p_value" type="password" class="field_value">
 
       <label></label>
       <span>

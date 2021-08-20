@@ -57,9 +57,7 @@ class Gato_Gang extends De_Game
     if (this.player)
     {
       const canvas_pt = this.To_Canvas_Pt(event.offsetX, event.offsetY);
-      const cmd = this.player.Move_To(canvas_pt.x, canvas_pt.y, this.now);
-
-      cmd.Update(this.db);
+      this.player.Move_To(this.db, canvas_pt.x, canvas_pt.y, this.now);
     }
   }
 
@@ -70,7 +68,7 @@ class Gato_Gang extends De_Game
       const local_obj = this.objs.find(o => o.id == obj.id);
       if (local_obj)
       {
-        local_obj.Apply_Cmd(obj.cmd);
+        local_obj.pos(obj.pos);
       }
     }
   }

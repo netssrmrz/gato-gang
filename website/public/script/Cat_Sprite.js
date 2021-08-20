@@ -64,14 +64,14 @@ class Cat_Sprite
 
     this.stand =
     [
-      {x: 96, y: 128, s: 32},  // 0 left-down
-      {x: 128, y: 128, s: 32}, // 1 down
-      {x: 96, y: 160, s: 32},  // 2 left-up
-      {x: 128, y: 160, s: 32}, // 3 left
-      {x: 96, y: 192, s: 32},  // 4 right-down
-      {x: 128, y: 192, s: 32}, // 5 right
-      {x: 96, y: 224, s: 32},  // 6 right-up
-      {x: 128, y: 224, s: 32}  // 7 up
+      {x: 96, y: 129, s: 32},  // 0 left-down
+      {x: 128, y: 129, s: 32}, // 1 down
+      {x: 96, y: 161, s: 32},  // 2 left-up
+      {x: 128, y: 161, s: 32}, // 3 left
+      {x: 96, y: 193, s: 32},  // 4 right-down
+      {x: 128, y: 193, s: 32}, // 5 right
+      {x: 96, y: 225, s: 32},  // 6 right-up
+      {x: 128, y: 225, s: 32}  // 7 up
     ];
 
     this.dir_to_frames = 

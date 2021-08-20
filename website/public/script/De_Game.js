@@ -12,8 +12,6 @@ class De_Game extends HTMLElement
 
     this.Init_Canvas();
     window.onresize = () => this.Init_Canvas();
-    //this.start_millis = this.Now();
-    //this.now = this.start_millis;
     window.requestAnimationFrame(t => this.Draw_Frame(t));
 
     if (this.On_Connected_Callback)
@@ -55,19 +53,7 @@ class De_Game extends HTMLElement
 
   Draw_Frame(t)
   {
-    let elapsed;
-    if (this.start_millis)
-    {
-      const new_now = Date.now();
-      elapsed = new_now - this.now;
-      this.now = new_now;
-    }
-    else
-    {
-      this.start_millis = Date.now();
-      this.now = this.start_millis;
-      elapsed = 0;
-    }
+    const elapsed = this.Update_Time();
 
     this.Clear();
     //this.gfx.fillText("start: " + this.start_millis, 50, 50);
@@ -90,15 +76,44 @@ class De_Game extends HTMLElement
 
       for (const obj of this.objs)
       {
-        this.gfx.save();
-        this.gfx.translate(obj.x, obj.y);
-        obj.Draw(this.gfx, elapsed);
-        this.gfx.restore();
+        if (obj.Draw)
+        {
+          this.gfx.save();
+
+          if (obj.Get_Position)
+          {
+            const pos = obj.Get_Position(this.now);
+            this.gfx.translate(pos.x, pos.y);
+          }
+
+          obj.Draw(this.gfx, elapsed, this.now);
+          this.gfx.restore();
+        }
       }
 
       this.gfx.restore();
     }
     window.requestAnimationFrame(t => this.Draw_Frame(t));
+  }
+
+  Update_Time()
+  {
+    let elapsed;
+
+    if (this.start_millis)
+    {
+      const new_now = Date.now();
+      elapsed = new_now - this.now;
+      this.now = new_now;
+    }
+    else
+    {
+      this.start_millis = Date.now();
+      this.now = this.start_millis;
+      elapsed = 0;
+    }
+
+    return elapsed;
   }
 
   Get_Millis(t)

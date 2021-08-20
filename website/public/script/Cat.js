@@ -2,81 +2,102 @@ import Cmd from "./Cmd.js";
 
 class Cat
 {
-  constructor(init_values)
+  constructor()
   {
-    this.To_Class_Object(init_values);
+    this.id = null;
+    this.uid = null;
+    this.max_v = 0.05;
+    this.pos = 
+    {
+      x2: 0,
+      y2: 0,
+      t2: 0,
+      dir: 4
+    };
   }
 
-  Move_To(x, y, t1)
+  static Create(db, uid)
   {
-    const dx = x - this.x;
-    const dy = y - this.y;
+    const cat = new Cat();
+    cat.uid = uid;
+    cat.pos.x2 = Math.random()*200-100;
+    cat.pos.y2 = Math.random()*200-100;
+
+    cat.Insert(db);
+  }
+
+  Move_To(db, x, y, t1)
+  {
+    const pos = this.Get_Position(t1);
+    const dx = x - pos.x;
+    const dy = y - pos.y;
     const d = Math.sqrt(dx*dx + dy*dy);
     const t2 = t1 + d/this.max_v;
     const dt = t2 - t1;
 
     const mx = dx / dt;
-    const bx = this.x - mx*t1;
+    const bx = pos.x - mx*t1;
     const my = dy / dt;
-    const by = this.y - my*t1;
-    const params = 
+    const by = pos.y - my*t1;
+    const dir = this.Calc_Direction(mx, my);
+    this.pos = 
     {
-      mx, bx, my, by, 
-      x1: this.x, y1: this.y, t1,
+      id: "pos",
+      mx, bx, my, by, dir,
+      x1: pos.x, y1: pos.y, t1,
       x2: x, y2: y, t2
     };
 
-    const cmd = new Cmd();
-    cmd.id = "cmd";
-    cmd.obj_id = this.id;
-    cmd.name = "On_Move_To";
-    cmd.params = params;
-    this.Apply_Cmd(cmd);
-
-    return cmd;
+    db.Update("obj/" + this.id, this.pos);
   }
 
-  Apply_Cmd(cmd)
+  Get_Position(t)
   {
-    if (cmd.name == "On_Move_To")
+    let x = this.pos.x1;
+    let y = this.pos.y1;
+
+    if (t > this.pos.t2)
     {
-      this.dir = this.Calc_Direction(cmd.params.mx, cmd.params.my);
+      x = this.pos.x2;
+      y = this.pos.y2;
     }
-    this.cmd = cmd;
+    else if (t > this.pos.t1)
+    {
+      x = this.pos.mx * t + this.pos.bx;
+      y = this.pos.my * t + this.pos.by;
+    }
+
+    return {x, y};
   }
 
-  On_Move_To(params, t)
+  Draw(gfx, elapsed_millis, t)
   {
-    if (t > params.t2)
+    if (t > this.pos.t2)
     {
-      t = params.t2;
-      this.cmd = null;
-      this.x = params.x2;
-      this.y = params.y2;
+      this.Draw_Standing(gfx);
     }
-    else if (t > params.t1)
+    else if (t > this.pos.t1)
     {
-      this.x = params.mx * t + params.bx;
-      this.y = params.my * t + params.by;
-    }
-  }
-
-  Draw(gfx, elapsed_millis)
-  {
-    let frames;
-
-    if (this.cmd)
-    {
-      frames = this.sprite.dir_to_frames[this.dir];
-      this.sprite.Animate(gfx, 0, 0, frames, elapsed_millis);
+      this.Draw_Walking(gfx, elapsed_millis);
     }
     else
     {
-      const frame_idx = this.sprite.dir_to_frame[this.dir];
-      frames = this.sprite.stand;
-      this.sprite.Draw(gfx, 0, 0, frames, frame_idx);
+      this.Draw_Standing(gfx);
     }
   }
+
+  Draw_Walking(gfx, elapsed_millis)
+  {
+    const frames = this.sprite.dir_to_frames[this.pos.dir];
+    this.sprite.Animate(gfx, 0, 0, frames, elapsed_millis);
+  }
+
+  Draw_Standing(gfx)
+  {
+    const frame_idx = this.sprite.dir_to_frame[this.pos.dir];
+    const frames = this.sprite.stand;
+    this.sprite.Draw(gfx, 0, 0, frames, frame_idx);
+}
 
   Calc_Direction(vx, vy)
   {
@@ -133,10 +154,8 @@ class Cat
     return {
       class: "Cat",
       id: this.id,
-      x: this.x,
-      y: this.y,
-      dir: this.dir,
-      uid: this.uid
+      uid: this.uid,
+      pos: this.pos
     };
   }
 
@@ -145,9 +164,7 @@ class Cat
     if (db_object)
     {
       this.id = db_object.id;
-      this.x = db_object.x;
-      this.y = db_object.y;
-      this.dir = db_object.dir;
+      this.pos = db_object.pos;
       this.uid = db_object.uid;
       this.max_v = 0.05;
     }

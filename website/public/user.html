@@ -13,7 +13,7 @@
       import "/script/component/index.js";
       import Utils from "./script/Utils.js";
       import De_Db_Realtime from "./script/De_Db_Realtime.js";
-      import Cat from "./script/Cat.js";
+      import User from "./script/User.js";
 
       let user, removeAuthStateChanged;
 
@@ -93,36 +93,23 @@
 
       async function On_Click_Save()
       {
-        const user_details = {};
+        const user_details = new User();
         Fields_To_Obj(user_details);
         if (user.uid)
         {
-          await Update_User(user, user_details);
-          //Return_To_Page();
+          await user.updateProfile(user_details);
+          await Update_Password(user, user_details.password);
         }
         else
         {
-          try
+          const res = await user_details.Insert(db);
+          if (res == "ok")
           {
-            const info = await firebase.auth(db.app)
-              .createUserWithEmailAndPassword(user_details.email, user_details.password);
-            await info.user.updateProfile(user_details);
-
-            const init_values =
-            {
-              x: Math.random()*200-100,
-              y: Math.random()*200-100,
-              dir: 4,
-              uid: info.user.uid
-            };
-            const cat = new Cat(init_values);
-            const id = await cat.Insert(db);
-
-            window.open("index.html", "_self");
+            alert("User created successfully.");
           }
-          catch (error)
+          else
           {
-            alert(error.message);
+            alert(res);
           }
         }
       }
@@ -132,21 +119,12 @@
         Return_To_Page();
       }
 
-      async function Update_User(fb_user, new_details)
-      {
-        delete new_details.email;
-        //delete user_details.password;
-        delete new_details.uid;
-        await fb_user.updateProfile(new_details);
-        await Update_Password(fb_user, new_details.password);
-      }
-
       async function Update_Password(user, password)
       {
         try 
         {
           await user.updatePassword(password);
-          alert("User details have been successfully updated.");
+          alert("Details have been successfully updated.");
         }
         catch (e)
         {
@@ -180,7 +158,7 @@
       <label></label>
       <span>
         <button id="ok_btn">Save</button>
-        <button id="cancel_btn">Cancel</button>
+        <button id="cancel_btn">Exit</button>
       </span>
     </div>
 

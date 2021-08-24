@@ -3,6 +3,8 @@ class De_Game extends HTMLElement
   constructor()
   {
     super();
+
+    this.By_Y_Pos = this.By_Y_Pos.bind(this);
   }
 
   connectedCallback() 
@@ -74,7 +76,9 @@ class De_Game extends HTMLElement
       this.gfx.save();
       this.gfx.setTransform(this.cam_tx);
 
-      for (const obj of this.objs)
+      const sorted_objs = this.objs.sort(this.By_Y_Pos);
+
+      for (const obj of sorted_objs)
       {
         if (obj.Draw)
         {
@@ -94,6 +98,14 @@ class De_Game extends HTMLElement
       this.gfx.restore();
     }
     window.requestAnimationFrame(t => this.Draw_Frame(t));
+  }
+
+  By_Y_Pos(a, b)
+  {
+    const a_y = a.Get_Position(this.now).y;
+    const b_y = b.Get_Position(this.now).y;
+
+    return a_y - b_y;
   }
 
   Update_Time()

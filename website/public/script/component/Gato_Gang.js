@@ -1,7 +1,7 @@
 import De_Game from "../De_Game.js";
 import Game_Object from "../Game_Object.js";
-import Cat_Sprite from "../Cat_Sprite.js";
 import De_Db_Realtime from "../De_Db_Realtime.js";
+import Img_Man from "../Img_Man.js";
 
 class Gato_Gang extends De_Game
 {
@@ -11,8 +11,8 @@ class Gato_Gang extends De_Game
 
     this.On_Obj_Changed = this.On_Obj_Changed.bind(this);
     this.On_Auth_State_Changed = this.On_Auth_State_Changed.bind(this);
-    
-    this.cat_sprite = new Cat_Sprite();
+
+    this.img_man = new Img_Man();
     this.objs = null;
     this.player = null;
     this.db = new De_Db_Realtime();
@@ -21,11 +21,7 @@ class Gato_Gang extends De_Game
 
   async Init_Game()
   {
-    this.objs = await Game_Object.Select_Objs(this.db);
-    for (const obj of this.objs)
-    {
-      obj.sprite = this.cat_sprite;
-    }
+    this.objs = await Game_Object.Select_Objs(this.db, this.img_man);
   }
 
   async On_Auth_State_Changed(user)

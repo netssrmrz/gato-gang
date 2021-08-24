@@ -1,4 +1,4 @@
-import Cat from "./Cat.js";
+import Cat from "./game_obj/Cat.js";
 
 class User
 {

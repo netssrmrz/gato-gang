@@ -179,7 +179,7 @@ class Cat
     const frame_idx = this.dir_to_frame[this.pos.dir];
     const frames = this.stand;
     this.Draw_Frame(gfx, 0, 0, frames, frame_idx);
-}
+  }
 
   Calc_Direction(vx, vy)
   {

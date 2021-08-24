@@ -1,5 +1,5 @@
 import Cat from "./game_obj/Cat.js";
-import Building from "./game_obj/Building.js";
+import Greek_Temple from "./game_obj/Greek_Temple.js";
 import Chinese_Tower from "./game_obj/Chinese_Tower.js";
 import Egyptian_House from "./game_obj/Egyptian_House.js";
 
@@ -19,7 +19,7 @@ class Game_Object
     const classes =
     {
       "Cat": Cat,
-      "Building": Building,
+      "Greek_Temple": Greek_Temple,
       "Chinese_Tower": Chinese_Tower,
       "Egyptian_House": Egyptian_House
     };

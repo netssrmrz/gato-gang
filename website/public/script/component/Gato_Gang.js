@@ -21,7 +21,7 @@ class Gato_Gang extends De_Game
 
   async Init_Game()
   {
-    this.objs = await Game_Object.Select_Objs(this.db, this.img_man);
+    this.objs = await Game_Object.Select_Objs(this, this.img_man);
   }
 
   async On_Auth_State_Changed(user)
@@ -67,6 +67,26 @@ class Gato_Gang extends De_Game
         local_obj.pos = obj.pos;
       }
     }
+  }
+
+  Find_Collision(src_obj)
+  {
+    let res;
+
+    for (const obj of this.objs)
+    {
+      if (obj.Find_Collision)
+      {
+        const collision = obj.Find_Collision(src_obj);
+        if (collision)
+        {
+          res = collision;
+          break;
+        }
+      }
+    }
+
+    return res;
   }
 }
 

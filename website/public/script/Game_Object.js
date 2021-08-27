@@ -5,15 +5,15 @@ import Egyptian_House from "./game_obj/Egyptian_House.js";
 
 class Game_Object
 {
-  static async Select_Objs(db, img_man)
+  static async Select_Objs(ctx, img_man)
   {
-    const objs = await db.Select_Objs("obj");
-    const class_objs = objs.map(obj => Game_Object.To_Class_Obj(obj, img_man));
+    const objs = await ctx.db.Select_Objs("obj");
+    const class_objs = objs.map(obj => Game_Object.To_Class_Obj(obj, img_man, ctx));
 
     return class_objs;
   }
 
-  static To_Class_Obj(obj, img_man)
+  static To_Class_Obj(obj, img_man, ctx)
   {
     let res;
     const classes =
@@ -24,7 +24,7 @@ class Game_Object
       "Egyptian_House": Egyptian_House
     };
 
-    res = new classes[obj.class](img_man);
+    res = new classes[obj.class](img_man, ctx);
     res.To_Class_Object(obj);
 
     return res;

@@ -1,15 +1,17 @@
+import Utils from "../Utils.js";
 
 class Building
 {
-  constructor(img_man)
+  constructor(img_man, ctx)
   {
+    this.ctx = ctx;
     this.id = null;
     this.uid = null;
-    this.pos = 
-    {
-      x: 0,
-      y: 0
-    };
+    this.pos = {x: 0, y: 0};
+    this.bounds =
+    [
+      {x: 0, y: 25, r: 50}
+    ];
 
     this.On_Load = this.On_Load.bind(this);
 
@@ -70,6 +72,35 @@ class Building
         0, 0, this.img.width, this.img.height, 
         x, y, this.img.width, this.img.height);
     }
+
+    gfx.fillStyle = "#00ff0088";
+    for (const bound of this.bounds)
+    {
+      gfx.beginPath();
+      gfx.arc(bound.x, bound.y, bound.r, 0, Math.PI*2);
+      gfx.fill();
+    }
+  }
+
+  Find_Collision(obj)
+  {
+    let res;
+
+    const pos = obj.Get_Path();
+    for (const bound of this.bounds)
+    {
+      const bound_x = this.pos.x + bound.x;
+      const bound_y = this.pos.y + bound.y;
+      const collision = Utils.Path_Circle_Intersection
+        (pos.x1, pos.y1, pos.x2, pos.y2, bound_x, bound_y, bound.r);
+      if (collision)
+      {
+        res = collision;
+        break;
+      }
+    }
+
+    return res;
   }
 }
 

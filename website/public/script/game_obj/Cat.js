@@ -1,8 +1,10 @@
+import Utils from "../Utils.js";
 
 class Cat
 {
-  constructor(img_man)
+  constructor(img_man, ctx)
   {
+    this.ctx = ctx;
     this.id = null;
     this.uid = null;
     this.max_v = 0.05;
@@ -111,45 +113,28 @@ class Cat
   Move_To(db, x, y, t1)
   {
     const pos = this.Get_Position(t1);
-    const dx = x - pos.x;
-    const dy = y - pos.y;
-    const d = Math.sqrt(dx*dx + dy*dy);
-    const t2 = t1 + d/this.max_v;
-    const dt = t2 - t1;
+    let t2 = Utils.Calc_Arrival_Time(pos.x, pos.y, t1, x, y, this.max_v);
+    this.pos = Utils.Calc_Path(pos.x, pos.y, t1, x, y, t2);
+    this.pos.id = "pos";
 
-    const mx = dx / dt;
-    const bx = pos.x - mx*t1;
-    const my = dy / dt;
-    const by = pos.y - my*t1;
-    const dir = this.Calc_Direction(mx, my);
-    this.pos = 
+    this.collision = this.ctx.Find_Collision(this);
+    if (this.collision)
     {
-      id: "pos",
-      mx, bx, my, by, dir,
-      x1: pos.x, y1: pos.y, t1,
-      x2: x, y2: y, t2
-    };
+      t2 = Utils.Calc_Arrival_Time(pos.x, pos.y, t1, this.collision.x, this.collision.y, this.max_v);
+      this.pos = Utils.Calc_Path(pos.x, pos.y, t1, this.collision.x, this.collision.y, t2);
+    }
 
     db.Update("obj/" + this.id, this.pos);
   }
 
   Get_Position(t)
   {
-    let x = this.pos.x1;
-    let y = this.pos.y1;
+    return Utils.Calc_Position(this.pos, t);
+  }
 
-    if (t > this.pos.t2)
-    {
-      x = this.pos.x2;
-      y = this.pos.y2;
-    }
-    else if (t > this.pos.t1)
-    {
-      x = this.pos.mx * t + this.pos.bx;
-      y = this.pos.my * t + this.pos.by;
-    }
-
-    return {x, y};
+  Get_Path()
+  {
+    return this.pos;
   }
 
   Draw(gfx, elapsed_millis, t)
@@ -179,56 +164,6 @@ class Cat
     const frame_idx = this.dir_to_frame[this.pos.dir];
     const frames = this.stand;
     this.Draw_Frame(gfx, 0, 0, frames, frame_idx);
-  }
-
-  Calc_Direction(vx, vy)
-  {
-    let res = 0;
-
-    const m1 = 0.41421356237;
-    const m2 = 2.41421356237;
-    const m3 = -2.41421356237;
-    const m4 = -0.41421356237;
-
-    const m1y = m1 * vx;
-    const m2y = m2 * vx;
-    const m3y = m3 * vx;
-    const m4y = m4 * vx;
-
-    if (vy < m2y && vy < m3y)
-    {
-      res = 0
-    }
-    else if (vy < m1y && vy > m2y)
-    {
-      res = 1
-    }
-    else if (vy < m4y && vy > m1y)
-    {
-      res = 2
-    }
-    else if (vy < m3y && vy > m4y)
-    {
-      res = 3
-    }
-    else if (vy > m2y && vy > m3y)
-    {
-      res = 4
-    }
-    else if (vy > m1y && vy < m2y)
-    {
-      res = 5
-    }
-    else if (vy > m4y && vy < m1y)
-    {
-      res = 6
-    }
-    else if (vy > m3y && vy < m4y)
-    {
-      res = 7
-    }
-
-    return res;
   }
 
   To_Db_Object()

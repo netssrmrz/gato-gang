@@ -95,6 +95,17 @@ class De_Game extends HTMLElement
         }
       }
 
+      /*for (const obj of this.objs)
+      {
+        if (obj.collision)
+        {
+          this.gfx.fillStyle = "#ff000088";
+          this.gfx.beginPath();
+          this.gfx.arc(obj.collision.x, obj.collision.y, 5, 0, Math.PI*2);
+          this.gfx.fill();
+        }
+      }*/
+
       this.gfx.restore();
     }
     window.requestAnimationFrame(t => this.Draw_Frame(t));

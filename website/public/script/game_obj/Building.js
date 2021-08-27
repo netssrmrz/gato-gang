@@ -73,13 +73,13 @@ class Building
         x, y, this.img.width, this.img.height);
     }
 
-    gfx.fillStyle = "#00ff0088";
+    /*gfx.fillStyle = "#00ff0088";
     for (const bound of this.bounds)
     {
       gfx.beginPath();
       gfx.arc(bound.x, bound.y, bound.r, 0, Math.PI*2);
       gfx.fill();
-    }
+    }*/
   }
 
   Find_Collision(obj)
